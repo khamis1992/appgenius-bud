@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { pipeline } from '@huggingface/transformers';
+import { pipeline, type TextGenerationOutput } from '@huggingface/transformers';
 import CommandInput from '../components/CommandInput';
 import CodePreview from '../components/CodePreview';
 import Header from '../components/Header';
@@ -19,13 +19,15 @@ const Index = () => {
         { device: 'cpu' }
       );
 
-      // Generate code (this is a simplified example)
+      // Generate code
       const result = await generator(command, {
         max_length: 100,
         num_return_sequences: 1,
       });
 
-      setGeneratedCode(result[0].generated_text);
+      // Handle the result correctly based on its type
+      const generatedText = Array.isArray(result) ? result[0].text : result.text;
+      setGeneratedCode(generatedText);
       toast.success('Code generated successfully!');
     } catch (error) {
       console.error('Error generating code:', error);
