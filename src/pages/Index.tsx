@@ -17,23 +17,23 @@ const Index = () => {
         'text-generation',
         'Xenova/distilgpt2',  // Using distilgpt2 instead of gpt2
         {
-          revision: 'main',
-          temperature: 0.7,
-          max_new_tokens: 100,
-          top_k: 50,
-          top_p: 0.95,
+          revision: 'main'
         }
       );
 
-      // Generate code
-      const result = await generator(command);
+      // Generate code with specific generation parameters
+      const result = await generator(command, {
+        max_new_tokens: 100,
+        top_k: 50,
+        top_p: 0.95
+      });
 
       // Extract the generated text
       let generatedText = '';
       if (Array.isArray(result)) {
-        generatedText = result[0]?.generated_text || '';
+        generatedText = result[0]?.sequences?.[0]?.text || '';
       } else {
-        generatedText = result.generated_text || '';
+        generatedText = result.sequences?.[0]?.text || '';
       }
         
       setGeneratedCode(generatedText);
