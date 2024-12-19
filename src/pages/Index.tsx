@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { pipeline, type TextGenerationOutput } from '@huggingface/transformers';
+import { pipeline } from '@huggingface/transformers';
 import CommandInput from '../components/CommandInput';
 import CodePreview from '../components/CodePreview';
 import Header from '../components/Header';
@@ -26,7 +26,10 @@ const Index = () => {
       });
 
       // Handle the result correctly based on its type
-      const generatedText = Array.isArray(result) ? result[0].text : result.text;
+      const generatedText = Array.isArray(result) 
+        ? result[0].generated_text 
+        : result.generated_text;
+        
       setGeneratedCode(generatedText);
       toast.success('Code generated successfully!');
     } catch (error) {
