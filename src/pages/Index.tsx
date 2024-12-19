@@ -5,6 +5,10 @@ import CodePreview from '../components/CodePreview';
 import Header from '../components/Header';
 import { toast } from 'sonner';
 
+interface TextGenerationResult {
+  generated_text: string;
+}
+
 const Index = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
@@ -23,7 +27,7 @@ const Index = () => {
       const result = await generator(command, {
         max_length: 100,
         num_return_sequences: 1,
-      });
+      }) as TextGenerationResult | TextGenerationResult[];
 
       // Handle the result correctly based on its type
       const generatedText = Array.isArray(result) 
