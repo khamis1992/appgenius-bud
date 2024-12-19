@@ -5,10 +5,6 @@ import CodePreview from '../components/CodePreview';
 import Header from '../components/Header';
 import { toast } from 'sonner';
 
-interface TextGenerationResult {
-  generated_text: string;
-}
-
 const Index = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
@@ -16,20 +12,24 @@ const Index = () => {
   const processCommand = async (command: string) => {
     setIsProcessing(true);
     try {
-      // Initialize the model (in a real app, this would be done once at startup)
+      // Initialize the model
       const generator = await pipeline(
         'text-generation',
-        'onnx-community/gpt2-small',
-        { device: 'cpu' }
+        'Xenova/gpt2', // Using a publicly available model
+        { 
+          device: 'cpu',
+          quantized: false // Disable quantization for better browser compatibility
+        }
       );
 
       // Generate code
       const result = await generator(command, {
         max_length: 100,
         num_return_sequences: 1,
-      }) as TextGenerationResult | TextGenerationResult[];
+        temperature: 0.7,
+        do_sample: true
+      });
 
-      // Handle the result correctly based on its type
       const generatedText = Array.isArray(result) 
         ? result[0].generated_text 
         : result.generated_text;
@@ -38,14 +38,22 @@ const Index = () => {
       toast.success('Code generated successfully!');
     } catch (error) {
       console.error('Error generating code:', error);
-      toast.error('Failed to generate code. Please try again.');
+      toast.error('Failed to generate code. Please check console for details.');
+      
+      // More specific error messages based on the error type
+      if (error instanceof Error) {
+        if (error.message.includes('401')) {
+          toast.error('Authentication error with the model. Using public model instead.');
+        } else if (error.message.includes('Failed to fetch')) {
+          toast.error('Network error. Please check your internet connection.');
+        }
+      }
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handleOpenSettings = () => {
-    // This would open settings in a real app
     toast.info('Settings panel coming soon!');
   };
 
