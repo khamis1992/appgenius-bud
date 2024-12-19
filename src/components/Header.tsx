@@ -1,5 +1,7 @@
 import React from 'react';
 import { Settings } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 interface HeaderProps {
   onOpenSettings: () => void;
@@ -7,18 +9,22 @@ interface HeaderProps {
 
 const Header = ({ onOpenSettings }: HeaderProps) => {
   return (
-    <header className="flex items-center justify-between p-4 border-b border-border/50">
-      <div className="flex items-center gap-2">
-        <h1 className="text-xl font-semibold">Offline AI Builder</h1>
-        <span className="px-2 py-1 text-xs bg-secondary rounded-full">Beta</span>
+    <header className="border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h1 className="text-xl font-semibold">Offline AI Builder</h1>
+          <Badge variant="secondary">Beta</Badge>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onOpenSettings}
+          className="h-9 w-9"
+          aria-label="Settings"
+        >
+          <Settings className="h-5 w-5" />
+        </Button>
       </div>
-      <button
-        onClick={onOpenSettings}
-        className="p-2 hover:bg-accent rounded-lg transition-colors"
-        aria-label="Settings"
-      >
-        <Settings className="w-5 h-5" />
-      </button>
     </header>
   );
 };

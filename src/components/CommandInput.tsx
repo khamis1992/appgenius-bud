@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Send } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 interface CommandInputProps {
   onSubmit: (command: string) => void;
@@ -18,21 +20,24 @@ const CommandInput = ({ onSubmit, isProcessing }: CommandInputProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative">
-      <textarea
-        className="command-input resize-none min-h-[100px]"
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Textarea
+        className="min-h-[200px] resize-none p-4 font-mono text-sm"
         placeholder="Describe your application in natural language..."
         value={command}
         onChange={(e) => setCommand(e.target.value)}
         disabled={isProcessing}
       />
-      <button
-        type="submit"
-        disabled={isProcessing || !command.trim()}
-        className="absolute bottom-4 right-4 p-2 rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      >
-        <Send className="w-5 h-5" />
-      </button>
+      <div className="flex justify-end">
+        <Button
+          type="submit"
+          disabled={isProcessing || !command.trim()}
+          className="px-6"
+        >
+          <Send className="w-4 h-4 mr-2" />
+          Generate
+        </Button>
+      </div>
     </form>
   );
 };

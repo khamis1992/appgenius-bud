@@ -4,6 +4,10 @@ import CommandInput from '../components/CommandInput';
 import CodePreview from '../components/CodePreview';
 import Header from '../components/Header';
 import { toast } from 'sonner';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Loader2 } from 'lucide-react';
 
 const Index = () => {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -12,28 +16,25 @@ const Index = () => {
   const processCommand = async (command: string) => {
     setIsProcessing(true);
     try {
-      // Initialize the model with specific configuration
       const generator = await pipeline(
         'text-generation',
-        'Xenova/distilgpt2',  // Using distilgpt2 instead of gpt2
+        'Xenova/distilgpt2',
         {
           revision: 'main'
         }
       );
 
-      // Generate code with specific generation parameters
       const result = await generator(command, {
         max_new_tokens: 100,
         top_k: 50,
         top_p: 0.95
       });
 
-      // Extract the generated text
       let generatedText = '';
-      if (Array.isArray(result)) {
-        generatedText = result[0]?.sequences?.[0]?.text || '';
-      } else {
-        generatedText = result.sequences?.[0]?.text || '';
+      if (Array.isArray(result) && result[0]) {
+        generatedText = result[0].text || '';
+      } else if ('text' in result) {
+        generatedText = result.text || '';
       }
         
       setGeneratedCode(generatedText);
@@ -62,22 +63,38 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header onOpenSettings={handleOpenSettings} />
-      <main className="flex-1 container py-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="space-y-4 animate-fade-up">
-          <h2 className="text-2xl font-semibold">Command Input</h2>
-          <CommandInput onSubmit={processCommand} isProcessing={isProcessing} />
-          {isProcessing && (
-            <div className="text-center text-secondary">
-              Processing your request...
-            </div>
-          )}
-        </div>
-        <div className="space-y-4 animate-fade-up">
-          <h2 className="text-2xl font-semibold">Generated Code</h2>
-          <CodePreview code={generatedCode} />
-        </div>
+      
+      <main className="flex-1 container py-8 px-4">
+        <Tabs defaultValue="editor" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="editor">Editor</TabsTrigger>
+            <TabsTrigger value="preview">Preview</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="editor" className="space-y-6">
+            <Card className="p-6">
+              <h2 className="text-2xl font-semibold mb-4">Command Input</h2>
+              <CommandInput onSubmit={processCommand} isProcessing={isProcessing} />
+              {isProcessing && (
+                <div className="flex items-center justify-center gap-2 mt-4 text-secondary">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Processing your request...</span>
+                </div>
+              )}
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="preview" className="space-y-6">
+            <Card className="p-6">
+              <h2 className="text-2xl font-semibold mb-4">Generated Code</h2>
+              <ScrollArea className="h-[500px] rounded-md border p-4">
+                <CodePreview code={generatedCode} />
+              </ScrollArea>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
