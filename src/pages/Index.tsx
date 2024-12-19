@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { pipeline } from '@huggingface/transformers';
+import { pipeline, TextGenerationOutput } from '@huggingface/transformers';
 import CommandInput from '../components/CommandInput';
 import CodePreview from '../components/CodePreview';
 import Header from '../components/Header';
@@ -17,7 +17,6 @@ const Index = () => {
         'text-generation',
         'Xenova/gpt2',
         {
-          quantized: false,
           revision: 'main',
           minLength: 10,
           maxLength: 100,
@@ -31,9 +30,12 @@ const Index = () => {
       const result = await generator(command);
 
       // Extract the generated text
-      const generatedText = Array.isArray(result) 
-        ? result[0].generated_text 
-        : result.generated_text;
+      let generatedText = '';
+      if (Array.isArray(result)) {
+        generatedText = result[0]?.text || '';
+      } else {
+        generatedText = result.text || '';
+      }
         
       setGeneratedCode(generatedText);
       toast.success('Code generated successfully!');
