@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { pipeline, TextGenerationOutput } from '@huggingface/transformers';
+import { pipeline } from '@huggingface/transformers';
 import CommandInput from '../components/CommandInput';
 import CodePreview from '../components/CodePreview';
 import Header from '../components/Header';
@@ -15,14 +15,13 @@ const Index = () => {
       // Initialize the model with specific configuration
       const generator = await pipeline(
         'text-generation',
-        'Xenova/gpt2',
+        'Xenova/distilgpt2',  // Using distilgpt2 instead of gpt2
         {
           revision: 'main',
-          minLength: 10,
-          maxLength: 100,
-          topK: 50,
-          topP: 0.95,
           temperature: 0.7,
+          max_new_tokens: 100,
+          top_k: 50,
+          top_p: 0.95,
         }
       );
 
@@ -32,9 +31,9 @@ const Index = () => {
       // Extract the generated text
       let generatedText = '';
       if (Array.isArray(result)) {
-        generatedText = result[0]?.text || '';
+        generatedText = result[0]?.generated_text || '';
       } else {
-        generatedText = result.text || '';
+        generatedText = result.generated_text || '';
       }
         
       setGeneratedCode(generatedText);
