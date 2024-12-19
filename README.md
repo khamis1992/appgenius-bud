@@ -60,6 +60,25 @@ This project is built with .
 - shadcn-ui
 - Tailwind CSS
 
+## How to run the desktop application
+
+1. Install dependencies:
+```sh
+npm install
+```
+
+2. Run in development mode:
+```sh
+# Start the Vite dev server and Electron
+npm run electron:dev
+```
+
+3. Build for production:
+```sh
+# Build the application for your platform
+npm run electron:build
+```
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/387275cf-7636-4201-9ba1-ae18bbd7f564) and click on Share -> Publish.
@@ -67,3 +86,4 @@ Simply open [Lovable](https://lovable.dev/projects/387275cf-7636-4201-9ba1-ae18b
 ## I want to use a custom domain - is that possible?
 
 We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+

@@ -1,0 +1,20 @@
+{
+  "appId": "com.lovable.aibuilder",
+  "productName": "AI Application Builder",
+  "directories": {
+    "output": "release/"
+  },
+  "files": [
+    "dist/**/*",
+    "electron/**/*"
+  ],
+  "mac": {
+    "category": "public.app-category.developer-tools"
+  },
+  "win": {
+    "target": "nsis"
+  },
+  "linux": {
+    "target": "AppImage"
+  }
+}
