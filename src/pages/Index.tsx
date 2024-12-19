@@ -12,24 +12,25 @@ const Index = () => {
   const processCommand = async (command: string) => {
     setIsProcessing(true);
     try {
-      // Initialize the model
+      // Initialize the model with specific configuration
       const generator = await pipeline(
         'text-generation',
-        'Xenova/gpt2', // Using a publicly available model
-        { 
-          device: 'cpu',
-          quantized: false // Disable quantization for better browser compatibility
+        'Xenova/gpt2',
+        {
+          quantized: false,
+          revision: 'main',
+          minLength: 10,
+          maxLength: 100,
+          topK: 50,
+          topP: 0.95,
+          temperature: 0.7,
         }
       );
 
       // Generate code
-      const result = await generator(command, {
-        max_length: 100,
-        num_return_sequences: 1,
-        temperature: 0.7,
-        do_sample: true
-      });
+      const result = await generator(command);
 
+      // Extract the generated text
       const generatedText = Array.isArray(result) 
         ? result[0].generated_text 
         : result.generated_text;
@@ -38,15 +39,17 @@ const Index = () => {
       toast.success('Code generated successfully!');
     } catch (error) {
       console.error('Error generating code:', error);
-      toast.error('Failed to generate code. Please check console for details.');
       
-      // More specific error messages based on the error type
       if (error instanceof Error) {
         if (error.message.includes('401')) {
-          toast.error('Authentication error with the model. Using public model instead.');
+          toast.error('Authentication error. Trying with public model...');
         } else if (error.message.includes('Failed to fetch')) {
           toast.error('Network error. Please check your internet connection.');
+        } else {
+          toast.error(`Error: ${error.message}`);
         }
+      } else {
+        toast.error('An unexpected error occurred.');
       }
     } finally {
       setIsProcessing(false);
