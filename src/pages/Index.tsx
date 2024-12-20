@@ -24,12 +24,16 @@ const Index = () => {
       const result = await generator(command, {
         max_new_tokens: 100,
         top_k: 50,
-        top_p: 0.95
+        top_p: 0.95,
+        return_full_text: false
       });
 
+      // Handle the result based on its type
       let generatedText = '';
-      if (Array.isArray(result) && result[0]?.sequences?.[0]?.text) {
-        generatedText = result[0].sequences[0].text;
+      if (Array.isArray(result)) {
+        generatedText = result[0]?.generated_text || '';
+      } else {
+        generatedText = result.generated_text || '';
       }
         
       setGeneratedCode(generatedText);
